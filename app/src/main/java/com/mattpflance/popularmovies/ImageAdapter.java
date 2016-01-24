@@ -5,11 +5,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by MattPflance on 2016-01-20.
@@ -18,23 +19,20 @@ public class ImageAdapter extends BaseAdapter {
 
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
-    private Context mContext;
-    private ArrayList<String> posterLinks = new ArrayList<>();
+    private Context mContext = null;
+    private List<String> posterLinks = null;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, List<String> links) {
         mContext = c;
+        posterLinks = links;
     }
 
     public int getCount() {
-        if (posterLinks != null) {
-            return posterLinks.size();
-        } else {
-            return 0;
-        }
+        return (posterLinks != null) ? posterLinks.size() : 0;
     }
 
     public String getItem(int position) {
-        return posterLinks.get(position);
+        return (posterLinks != null) ? posterLinks.get(position) : null;
     }
 
     public long getItemId(int position) {
@@ -42,23 +40,30 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public void add(String link) {
-        posterLinks.add("http://image.tmdb.org/t/p/w500" + link);
-        Log.v(LOG_TAG, "Length of posterLinks: " + posterLinks.size());
+        posterLinks.add("http://image.tmdb.org/t/p/w185" + link);
+    }
+
+    public void clear() {
+        posterLinks.clear();
     }
 
     // create a new ImageView for each item referenced by the Adapter
     @Override
-    public ImageView getView(int position, View convertView, ViewGroup parent) {
-        ImageView view = (ImageView) convertView;
-        if (view == null) {
-            view = new ImageView(mContext);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ImageView posterView;
+        if (convertView == null) {
+            Log.v(LOG_TAG, "Make a new view!");
+            posterView = new ImageView(mContext);
+            posterView.setLayoutParams(new GridView.LayoutParams(parent.getWidth()/2, parent.getHeight()/2));
+            posterView.setPadding(2, 2, 2, 2);
+        } else {
+            posterView = (ImageView) convertView;
         }
         String url = getItem(position);
 
-        Picasso
-                .with(mContext)
-                .load(url)
-                .into(view);
-        return view;
+        Log.v(LOG_TAG, "Position " + position + ": URL IS " + url);
+
+        Picasso.with(mContext).load(url).into(posterView);
+        return posterView;
     }
 }

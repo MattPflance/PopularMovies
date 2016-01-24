@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -30,6 +31,7 @@ import java.net.URL;
 public class MoviesFragment extends Fragment {
 
     private ImageAdapter mMoviesAdapter;
+    private String sortingStr = "popularity.desc";
 
     public MoviesFragment() {
     }
@@ -45,7 +47,7 @@ public class MoviesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // The adapter that takes data and populated the GridView attached to it
-        mMoviesAdapter = new ImageAdapter(rootView.getContext());
+        mMoviesAdapter = new ImageAdapter(rootView.getContext(), new ArrayList<String>());
 
         // Now find the GridView we want to bind our adapter to
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -67,6 +69,12 @@ public class MoviesFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadMovies();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.movies_menu, menu);
@@ -80,8 +88,13 @@ public class MoviesFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
-            //sortMovies();
+        if (id == R.id.action_sort_by_popular) {
+            sortingStr = "popularity.desc";
+            loadMovies();
+            return true;
+        } else if (id == R.id.action_sort_by_high_rating) {
+            sortingStr = "vote_average.desc";
+            loadMovies();
             return true;
         }
 
@@ -90,12 +103,6 @@ public class MoviesFragment extends Fragment {
 
     private void loadMovies() {
         new FetchMoviesTask().execute();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadMovies();
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
@@ -117,14 +124,15 @@ public class MoviesFragment extends Fragment {
 
                 // https://api.themoviedb.org/3/movie/550?api_key=1f223fc89d191807769dde2869ad3910
                 final String API_KEY = "1f223fc89d191807769dde2869ad3910";
-                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String KEY_PARAM = "api_key";
-//                final String QUERY_PARAM = "q";
+                final String SORT_PARAM = "sort_by";
 //                final String FORMAT_PARAM = "mode";
 //                final String UNITS_PARAM = "units";
 //                final String DAYS_PARAM = "cnt";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(SORT_PARAM, sortingStr)
                         .appendQueryParameter(KEY_PARAM, API_KEY)
                         .build();
 
@@ -191,12 +199,12 @@ public class MoviesFragment extends Fragment {
             // Clears the adapter to set new information
             super.onPostExecute(poster_links);
             if (poster_links != null) {
-                //mMoviesAdapter.clear();
+                mMoviesAdapter.clear();
                 for (String link : poster_links) {
                     mMoviesAdapter.add(link);
                 }
+                mMoviesAdapter.notifyDataSetChanged();
             }
-            mMoviesAdapter.notifyDataSetChanged();
         }
 
         private String[] getMovieDataFromJson(String jsonStr) throws JSONException {

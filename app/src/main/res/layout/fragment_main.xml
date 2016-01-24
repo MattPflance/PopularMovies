@@ -6,4 +6,6 @@
     android:numColumns="auto_fit"
     android:verticalSpacing="@dimen/vert_grid_spacing"
     android:horizontalSpacing="@dimen/horz_grid_spacing"
-    android:stretchMode="columnWidth" />
+    android:stretchMode="columnWidth"
+    android:gravity="center"
+    />
