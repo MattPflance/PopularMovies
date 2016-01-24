@@ -1,5 +1,6 @@
 package com.mattpflance.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -29,6 +31,8 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class MoviesFragment extends Fragment {
+
+    private final String LOG_TAG = MoviesFragment.class.getSimpleName();
 
     private ImageAdapter mMoviesAdapter;
     private String sortingStr = "popularity.desc";
@@ -54,16 +58,15 @@ public class MoviesFragment extends Fragment {
 
         // Set the adapter to the GridView
         gridView.setAdapter(mMoviesAdapter);
-//        gridList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                TextView forecastView = (TextView) view;
-//                CharSequence forecastData = forecastView.getText();
-//                Intent intent = new Intent(getActivity(), DetailActivity.class);
-//                intent.putExtra(Intent.EXTRA_TEXT, forecastData);
-//                startActivity(intent);
-//            }
-//        });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                int position = adapterView.getCount();
+                Log.v(LOG_TAG, "The count on the tapped adapter: " + position);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -106,12 +109,12 @@ public class MoviesFragment extends Fragment {
         new FetchMoviesTask().execute();
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected String[][] doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -201,24 +204,25 @@ public class MoviesFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] poster_links) {
+        protected void onPostExecute(String[][] movies) {
             // Clears the adapter to set new information
-            super.onPostExecute(poster_links);
-            if (poster_links != null) {
+            super.onPostExecute(movies);
+            if (movies != null) {
                 mMoviesAdapter.clear();
-                for (String link : poster_links) {
-                    mMoviesAdapter.add(link);
+                for (String[] movie : movies) {
+                    mMoviesAdapter.add(movie);
                 }
                 mMoviesAdapter.notifyDataSetChanged();
             }
         }
 
-        private String[] getMovieDataFromJson(String jsonStr) throws JSONException {
+        private String[][] getMovieDataFromJson(String jsonStr) throws JSONException {
 
             final String MDB_RESULTS = "results";
-//            final String MDB_TITLE = "original_title";
-//            final String MDB_OVERVIEW = "overview";
-//            final String MDB_RELEASE = "release_date";
+            final String MDB_TITLE = "original_title";
+            final String MDB_OVERVIEW = "overview";
+            final String MDB_RELEASE = "release_date";
+            final String MDB_RATING = "vote_average";
             final String MDB_POSTER = "poster_path";
 
             JSONObject moviesJson = new JSONObject(jsonStr);
@@ -227,15 +231,18 @@ public class MoviesFragment extends Fragment {
 
             int num_movies = moviesArray.length();
 
-            String[] linksStr = new String[num_movies];
+            String[][] linksStr = new String[num_movies][];
 
             for (int i=0; i<num_movies; i++) {
+                String[] movieData = new String[5];
                 JSONObject movie = moviesArray.getJSONObject(i);
-//                String movie_title = movie.getJSONObject(MDB_TITLE).getString(MDB_TITLE);
-//                String movie_overview = movie.getJSONObject(MDB_OVERVIEW).getString(MDB_OVERVIEW);
-//                String movie_release_date = movie.getJSONObject(MDB_RELEASE).getString(MDB_RELEASE);
-                String movie_poster = movie.getString(MDB_POSTER);
-                linksStr[i] = movie_poster;
+
+                movieData[0] = movie.getJSONObject(MDB_TITLE).getString(MDB_TITLE);
+                movieData[1] = movie.getString(MDB_POSTER);
+                movieData[2] = movie.getJSONObject(MDB_OVERVIEW).getString(MDB_OVERVIEW);
+                movieData[3] = movie.getJSONObject(MDB_RELEASE).getString(MDB_RELEASE);
+                movieData[4] = movie.getJSONObject(MDB_RATING).getString(MDB_RATING);
+                linksStr[i] = movieData;
             }
 
             return linksStr;

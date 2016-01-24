@@ -12,15 +12,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by MattPflance on 2016-01-20.
- */
 public class ImageAdapter extends BaseAdapter {
 
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
     private Context mContext = null;
+    private List<String> titles = null;
     private List<String> posterLinks = null;
+    private List<String> overviews = null;
+    private List<String> ratings = null;
+    private List<String> releaseDates = null;
 
     public ImageAdapter(Context c, List<String> links) {
         mContext = c;
@@ -39,18 +40,24 @@ public class ImageAdapter extends BaseAdapter {
         return 0;
     }
 
-    public void add(String link) {
-        Log.v(LOG_TAG, "Link to image: " + link);
-        if (link == "null") {
-            Log.v(LOG_TAG, "ALAKSJDLKAJSDLKAJSLKFDJALKSDNLKAJSDLKAJSDLKJASLKDJLKASDJLKAJSDLKJASDLKJALSKDJLAKSFJLASFJLJPIQWEPIQUPRINL:ANLKCALKJSFLKJAPIJQ)PWHJR");
+    public void add(String[] movieData) {
+        titles.add(movieData[0]);
+        if (movieData[1] == "null") {
             posterLinks.add("http://www.aurangabadcity.com/img/client_images/image_not_available.jpg");
         } else {
-            posterLinks.add("http://image.tmdb.org/t/p/w185" + link);
+            posterLinks.add("http://image.tmdb.org/t/p/w185" + movieData[1]);
         }
+        overviews.add(movieData[2]);
+        ratings.add(movieData[3]);
+        releaseDates.add(movieData[4]);
     }
 
     public void clear() {
+        titles.clear();
         posterLinks.clear();
+        overviews.clear();
+        ratings.clear();
+        releaseDates.clear();
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -66,8 +73,6 @@ public class ImageAdapter extends BaseAdapter {
             posterView = (ImageView) convertView;
         }
         String url = getItem(position);
-
-        Log.v(LOG_TAG, "Position " + position + ": URL IS " + url);
 
         Picasso.with(mContext).load(url).into(posterView);
         return posterView;
