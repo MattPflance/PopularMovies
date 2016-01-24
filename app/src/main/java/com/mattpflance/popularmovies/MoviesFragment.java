@@ -93,6 +93,7 @@ public class MoviesFragment extends Fragment {
             loadMovies();
             return true;
         } else if (id == R.id.action_sort_by_high_rating) {
+            // Include movies with at least 50 ratings for filtering
             sortingStr = "vote_average.desc";
             loadMovies();
             return true;
@@ -126,17 +127,22 @@ public class MoviesFragment extends Fragment {
                 final String API_KEY = "1f223fc89d191807769dde2869ad3910";
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String KEY_PARAM = "api_key";
+                final String COUNT_PARAM = "vote_count.gte";
                 final String SORT_PARAM = "sort_by";
-//                final String FORMAT_PARAM = "mode";
-//                final String UNITS_PARAM = "units";
-//                final String DAYS_PARAM = "cnt";
 
-                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(SORT_PARAM, sortingStr)
-                        .appendQueryParameter(KEY_PARAM, API_KEY)
-                        .build();
+                Uri.Builder preBuiltUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
+                        .appendQueryParameter(SORT_PARAM, sortingStr);
+
+                // Filter out "High Rated" movies that have less than 50 votes
+                if (sortingStr.equals("vote_average.desc")) {
+                    preBuiltUri.appendQueryParameter(COUNT_PARAM, "50");
+                }
+
+                Uri builtUri = preBuiltUri.appendQueryParameter(KEY_PARAM, API_KEY).build();
 
                 URL url = new URL(builtUri.toString());
+
+                Log.v(LOG_TAG, "REQUEST FROM THIS URL" + url.toString());
 
                 // Create the request to theMovieDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();

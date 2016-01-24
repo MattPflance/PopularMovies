@@ -40,7 +40,13 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public void add(String link) {
-        posterLinks.add("http://image.tmdb.org/t/p/w185" + link);
+        Log.v(LOG_TAG, "Link to image: " + link);
+        if (link == "null") {
+            Log.v(LOG_TAG, "ALAKSJDLKAJSDLKAJSLKFDJALKSDNLKAJSDLKAJSDLKJASLKDJLKASDJLKAJSDLKJASDLKJALSKDJLAKSFJLASFJLJPIQWEPIQUPRINL:ANLKCALKJSFLKJAPIJQ)PWHJR");
+            posterLinks.add("http://www.aurangabadcity.com/img/client_images/image_not_available.jpg");
+        } else {
+            posterLinks.add("http://image.tmdb.org/t/p/w185" + link);
+        }
     }
 
     public void clear() {
