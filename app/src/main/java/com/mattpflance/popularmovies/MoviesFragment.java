@@ -1,6 +1,7 @@
 package com.mattpflance.popularmovies;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -62,8 +63,8 @@ public class MoviesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                int position = adapterView.getCount();
-                Log.v(LOG_TAG, "The count on the tapped adapter: " + position);
+                MovieView movie = (MovieView) view;
+                intent.putExtra("TITLE", movie.getTitle());
                 startActivity(intent);
             }
         });
@@ -237,11 +238,11 @@ public class MoviesFragment extends Fragment {
                 String[] movieData = new String[5];
                 JSONObject movie = moviesArray.getJSONObject(i);
 
-                movieData[0] = movie.getJSONObject(MDB_TITLE).getString(MDB_TITLE);
+                movieData[0] = movie.getString(MDB_TITLE);
                 movieData[1] = movie.getString(MDB_POSTER);
-                movieData[2] = movie.getJSONObject(MDB_OVERVIEW).getString(MDB_OVERVIEW);
-                movieData[3] = movie.getJSONObject(MDB_RELEASE).getString(MDB_RELEASE);
-                movieData[4] = movie.getJSONObject(MDB_RATING).getString(MDB_RATING);
+                movieData[2] = movie.getString(MDB_OVERVIEW);
+                movieData[3] = movie.getString(MDB_RELEASE);
+                movieData[4] = movie.getString(MDB_RATING);
                 linksStr[i] = movieData;
             }
 

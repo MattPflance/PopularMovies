@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageAdapter extends BaseAdapter {
@@ -17,11 +18,11 @@ public class ImageAdapter extends BaseAdapter {
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
     private Context mContext = null;
-    private List<String> titles = null;
+    private List<String> titles = new ArrayList<>();
     private List<String> posterLinks = null;
-    private List<String> overviews = null;
-    private List<String> ratings = null;
-    private List<String> releaseDates = null;
+    private List<String> overviews = new ArrayList<>();
+    private List<String> ratings = new ArrayList<>();
+    private List<String> releaseDates = new ArrayList<>();
 
     public ImageAdapter(Context c, List<String> links) {
         mContext = c;
@@ -37,7 +38,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     public void add(String[] movieData) {
@@ -53,11 +54,11 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public void clear() {
-        titles.clear();
-        posterLinks.clear();
-        overviews.clear();
-        ratings.clear();
-        releaseDates.clear();
+        if (titles != null) titles.clear();
+        if (posterLinks != null) posterLinks.clear();
+        if (overviews != null) overviews.clear();
+        if (ratings != null) ratings.clear();
+        if (releaseDates != null) releaseDates.clear();
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -66,7 +67,12 @@ public class ImageAdapter extends BaseAdapter {
         ImageView posterView;
         if (convertView == null) {
             Log.v(LOG_TAG, "Make a new view!");
-            posterView = new ImageView(mContext);
+            posterView = new MovieView(mContext,
+                    titles.get(position),
+                    posterLinks.get(position),
+                    overviews.get(position),
+                    ratings.get(position),
+                    releaseDates.get(position));
             posterView.setLayoutParams(new GridView.LayoutParams(parent.getWidth()/2, parent.getHeight()/2));
             posterView.setPadding(2, 2, 2, 2);
         } else {
