@@ -22,6 +22,7 @@ public class ImageAdapter extends BaseAdapter {
     private List<String> posterLinks = null;
     private List<String> overviews = new ArrayList<>();
     private List<String> ratings = new ArrayList<>();
+    private List<String> numVotes = new ArrayList<>();
     private List<String> releaseDates = new ArrayList<>();
 
     public ImageAdapter(Context c, List<String> links) {
@@ -50,14 +51,23 @@ public class ImageAdapter extends BaseAdapter {
         }
         overviews.add(movieData[2]);
         ratings.add(movieData[3]);
-        releaseDates.add(movieData[4]);
+        numVotes.add(movieData[4]);
+        releaseDates.add(movieData[5]);
     }
+
+    public String getTitle(int position) { return titles.get(position); }
+    public String getPoster(int position) { return posterLinks.get(position); }
+    public String getOverview(int position) { return overviews.get(position); }
+    public String getRatings(int position) { return ratings.get(position); }
+    public String getNumVotes(int position) { return numVotes.get(position); }
+    public String getDates(int position) { return releaseDates.get(position); }
 
     public void clear() {
         if (titles != null) titles.clear();
         if (posterLinks != null) posterLinks.clear();
         if (overviews != null) overviews.clear();
         if (ratings != null) ratings.clear();
+        if (numVotes != null) numVotes.clear();
         if (releaseDates != null) releaseDates.clear();
     }
 
@@ -66,13 +76,7 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView posterView;
         if (convertView == null) {
-            Log.v(LOG_TAG, "Make a new view!");
-            posterView = new MovieView(mContext,
-                    titles.get(position),
-                    posterLinks.get(position),
-                    overviews.get(position),
-                    ratings.get(position),
-                    releaseDates.get(position));
+            posterView = new ImageView(mContext);
             posterView.setLayoutParams(new GridView.LayoutParams(parent.getWidth()/2, parent.getHeight()/2));
             posterView.setPadding(2, 2, 2, 2);
         } else {

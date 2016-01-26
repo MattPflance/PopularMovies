@@ -1,10 +1,13 @@
 package com.mattpflance.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,9 +37,11 @@ import java.util.ArrayList;
 public class MoviesFragment extends Fragment {
 
     private final String LOG_TAG = MoviesFragment.class.getSimpleName();
+    private final String DEFAULT_SORT = "popularity.desc";
 
+    private GridView gridView;
     private ImageAdapter mMoviesAdapter;
-    private String sortingStr = "popularity.desc";
+    private String sortingStr;
 
     public MoviesFragment() {
     }
@@ -51,20 +56,28 @@ public class MoviesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sortingStr = sharedPref.getString(getString(R.string.sort_key), DEFAULT_SORT);
+
         // The adapter that takes data and populated the GridView attached to it
         mMoviesAdapter = new ImageAdapter(rootView.getContext(), new ArrayList<String>());
 
         // Now find the GridView we want to bind our adapter to
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
+        gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
 
         // Set the adapter to the GridView
         gridView.setAdapter(mMoviesAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                MovieView movie = (MovieView) view;
-                intent.putExtra("TITLE", movie.getTitle());
+                intent.putExtra("TITLE", mMoviesAdapter.getTitle(i));
+                intent.putExtra("LINK", mMoviesAdapter.getPoster(i));
+                intent.putExtra("OVERVIEW", mMoviesAdapter.getOverview(i));
+                intent.putExtra("RATING", mMoviesAdapter.getRatings(i));
+                intent.putExtra("VOTES", mMoviesAdapter.getNumVotes(i));
+                intent.putExtra("DATE", mMoviesAdapter.getDates(i));
                 startActivity(intent);
             }
         });
@@ -73,8 +86,8 @@ public class MoviesFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         loadMovies();
     }
 
@@ -91,14 +104,21 @@ public class MoviesFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort_by_popular) {
             sortingStr = "popularity.desc";
+            editor.putString(getString(R.string.sort_key), sortingStr);
+            editor.commit();
             loadMovies();
             return true;
         } else if (id == R.id.action_sort_by_high_rating) {
             // Include movies with at least 50 ratings for filtering
             sortingStr = "vote_average.desc";
+            editor.putString(getString(R.string.sort_key), sortingStr);
+            editor.commit();
             loadMovies();
             return true;
         }
@@ -224,6 +244,7 @@ public class MoviesFragment extends Fragment {
             final String MDB_OVERVIEW = "overview";
             final String MDB_RELEASE = "release_date";
             final String MDB_RATING = "vote_average";
+            final String MDB_VOTES = "vote_count";
             final String MDB_POSTER = "poster_path";
 
             JSONObject moviesJson = new JSONObject(jsonStr);
@@ -235,14 +256,15 @@ public class MoviesFragment extends Fragment {
             String[][] linksStr = new String[num_movies][];
 
             for (int i=0; i<num_movies; i++) {
-                String[] movieData = new String[5];
+                String[] movieData = new String[6];
                 JSONObject movie = moviesArray.getJSONObject(i);
 
                 movieData[0] = movie.getString(MDB_TITLE);
                 movieData[1] = movie.getString(MDB_POSTER);
                 movieData[2] = movie.getString(MDB_OVERVIEW);
-                movieData[3] = movie.getString(MDB_RELEASE);
-                movieData[4] = movie.getString(MDB_RATING);
+                movieData[3] = movie.getString(MDB_RATING);
+                movieData[4] = movie.getString(MDB_VOTES);
+                movieData[5] = movie.getString(MDB_RELEASE);
                 linksStr[i] = movieData;
             }
 
