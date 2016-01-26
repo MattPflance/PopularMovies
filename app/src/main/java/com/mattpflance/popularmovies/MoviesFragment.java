@@ -147,8 +147,8 @@ public class MoviesFragment extends Fragment {
             try {
                 // Construct the URL for the theMovieDB API
 
-                // https://api.themoviedb.org/3/movie/550?api_key=1f223fc89d191807769dde2869ad3910
-                final String API_KEY = "1f223fc89d191807769dde2869ad3910";
+                // Enter your API key below
+                final String API_KEY = "";
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String KEY_PARAM = "api_key";
                 final String COUNT_PARAM = "vote_count.gte";
