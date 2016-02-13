@@ -148,7 +148,6 @@ public class MoviesFragment extends Fragment {
                 // Construct the URL for the theMovieDB API
 
                 // Enter your API key below
-                final String API_KEY = "";
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String KEY_PARAM = "api_key";
                 final String COUNT_PARAM = "vote_count.gte";
@@ -162,7 +161,8 @@ public class MoviesFragment extends Fragment {
                     preBuiltUri.appendQueryParameter(COUNT_PARAM, "50");
                 }
 
-                Uri builtUri = preBuiltUri.appendQueryParameter(KEY_PARAM, API_KEY).build();
+                Uri builtUri = preBuiltUri
+                        .appendQueryParameter(KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
 
                 URL url = new URL(builtUri.toString());
 
