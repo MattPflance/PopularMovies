@@ -43,6 +43,11 @@ public class DetailFragment extends Fragment {
         title = (TextView) view.findViewById(R.id.overview);
         title.setText(bundle.getString("OVERVIEW"));
 
+
+
         return view;
     }
+
+
+
 }

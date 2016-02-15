@@ -1,7 +1,12 @@
 package com.mattpflance.popularmovies;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.Image;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,78 +18,76 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageAdapter extends BaseAdapter {
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
 
     private final String LOG_TAG = ImageAdapter.class.getSimpleName();
 
-    private Context mContext = null;
-    private List<String> titles = new ArrayList<>();
-    private List<String> posterLinks = null;
-    private List<String> overviews = new ArrayList<>();
-    private List<String> ratings = new ArrayList<>();
-    private List<String> numVotes = new ArrayList<>();
-    private List<String> releaseDates = new ArrayList<>();
+    private Context mContext;
+    private RecyclerView mRecyclerView;
 
-    public ImageAdapter(Context c, List<String> links) {
+    /**
+     * List of Movies
+     */
+    private List<Movie> mDataSet;
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView posterView;
+
+        public ViewHolder(View view) {
+            super(view);
+            posterView = (ImageView) view.findViewById(R.id.movie_poster_image);
+        }
+
+    }
+
+    public ImageAdapter(Context c, RecyclerView recyclerView, List<Movie> dataSet) {
         mContext = c;
-        posterLinks = links;
+        mRecyclerView = recyclerView;
+        mDataSet = dataSet;
     }
 
-    public int getCount() {
-        return (posterLinks != null) ? posterLinks.size() : 0;
-    }
-
-    public String getItem(int position) {
-        return (posterLinks != null) ? posterLinks.get(position) : null;
-    }
-
-    public long getItemId(int position) {
-        return position;
-    }
-
-    public void add(String[] movieData) {
-        titles.add(movieData[0]);
-        if (movieData[1] == "null") {
-            posterLinks.add("http://www.aurangabadcity.com/img/client_images/image_not_available.jpg");
-        } else {
-            posterLinks.add("http://image.tmdb.org/t/p/w185" + movieData[1]);
-        }
-        overviews.add(movieData[2]);
-        ratings.add(movieData[3]);
-        numVotes.add(movieData[4]);
-        releaseDates.add(movieData[5]);
-    }
-
-    public String getTitle(int position) { return titles.get(position); }
-    public String getPoster(int position) { return posterLinks.get(position); }
-    public String getOverview(int position) { return overviews.get(position); }
-    public String getRatings(int position) { return ratings.get(position); }
-    public String getNumVotes(int position) { return numVotes.get(position); }
-    public String getDates(int position) { return releaseDates.get(position); }
-
-    public void clear() {
-        if (titles != null) titles.clear();
-        if (posterLinks != null) posterLinks.clear();
-        if (overviews != null) overviews.clear();
-        if (ratings != null) ratings.clear();
-        if (numVotes != null) numVotes.clear();
-        if (releaseDates != null) releaseDates.clear();
-    }
-
-    // create a new ImageView for each item referenced by the Adapter
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView posterView;
-        if (convertView == null) {
-            posterView = new ImageView(mContext);
-            posterView.setLayoutParams(new GridView.LayoutParams(parent.getWidth()/2, parent.getHeight()/2));
-            posterView.setPadding(2, 2, 2, 2);
-        } else {
-            posterView = (ImageView) convertView;
-        }
-        String url = getItem(position);
-
-        Picasso.with(mContext).load(url).into(posterView);
-        return posterView;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Called when RecyclerView needs a new RecyclerView.ViewHolder
+        // of the given type to represent an item.
+        View movieItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item, parent, false);
+        movieItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int itemPosition = mRecyclerView.getChildAdapterPosition(view);
+                Movie movie = mDataSet.get(itemPosition);
+                Intent intent = new Intent(mContext, DetailActivity.class);
+                intent.putExtra("TITLE", movie.getTitle());
+                intent.putExtra("LINK", movie.getPosterLink());
+                intent.putExtra("OVERVIEW", movie.getOverview());
+                intent.putExtra("RATING", movie.getRating());
+                intent.putExtra("VOTES", movie.getVotes());
+                intent.putExtra("DATE", movie.getReleaseDate());
+                mContext.startActivity(intent);
+            }
+        });
+        return new ViewHolder(movieItemView);
     }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        String posterLink = getMovie(position).getPosterLink();
+        if (posterLink == null) {
+            Picasso.with(mContext).load(R.drawable.image_not_available).into(viewHolder.posterView);
+        } else {
+            Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185" + posterLink).into(viewHolder.posterView);
+        }
+    }
+
+    @Override
+    public int getItemCount() { return (mDataSet != null) ? mDataSet.size() : 0; }
+
+    public long getItemId(int position) { return position; }
+
+    public void add(Movie movie) { mDataSet.add(movie); }
+    public void clear() { mDataSet.clear(); }
+
+    public Movie getMovie(int position) { return mDataSet.get(position); }
+
 }

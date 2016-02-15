@@ -1,9 +1,16 @@
 <resources>
+
+    <!-- Activity Titles -->
     <string name="app_name">Popular Movies</string>
+    <string name="title_activity_detail">Movie Details</string>
+
+    <!-- Menu Items -->
     <string name="action_sort_popular">Sort by Most Popular</string>
     <string name="action_sort_rating">Sort by Highest Ratings</string>
-    <string name="title_activity_detail">DetailActivity</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_favourites">My Favourites</string>
+
+    <!-- Other -->
     <string name="image_description">Thumbnail</string>
     <string name="sort_key">SORT</string>
+
 </resources>

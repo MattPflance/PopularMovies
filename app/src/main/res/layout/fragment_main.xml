@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView  xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gridview_movies"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:numColumns="auto_fit"
-    android:verticalSpacing="@dimen/vert_grid_spacing"
-    android:horizontalSpacing="@dimen/horz_grid_spacing"
-    android:stretchMode="columnWidth"
-    android:gravity="center"
-    />
+    android:layout_gravity="center_horizontal" />
+    <!--android:numColumns="auto_fit"-->
+    <!--android:verticalSpacing="@dimen/vert_grid_spacing"-->
+    <!--android:horizontalSpacing="@dimen/horz_grid_spacing"-->
+    <!--android:stretchMode="columnWidth"-->
+    <!--android:gravity="center"-->
+    <!--/>-->
