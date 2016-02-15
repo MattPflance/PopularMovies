@@ -64,6 +64,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 intent.putExtra("RATING", movie.getRating());
                 intent.putExtra("VOTES", movie.getVotes());
                 intent.putExtra("DATE", movie.getReleaseDate());
+                intent.putStringArrayListExtra("TRAILERS", movie.getTrailers());
+                intent.putStringArrayListExtra("REVIEWS", movie.getReviews());
                 mContext.startActivity(intent);
             }
         });
@@ -89,5 +91,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public void clear() { mDataSet.clear(); }
 
     public Movie getMovie(int position) { return mDataSet.get(position); }
+
+    public List<Movie> getDataSet() { return mDataSet; }
 
 }

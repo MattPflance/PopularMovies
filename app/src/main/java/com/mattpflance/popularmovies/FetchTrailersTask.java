@@ -21,7 +21,7 @@ import java.util.List;
  * An AsyncTask that grabs trailers for a particular movie
  */
 
-public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
+public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>> {
 
     private final String LOG_TAG = FetchTrailersTask.class.getSimpleName();
     private final String KEY_PARAM = "api_key";
@@ -35,7 +35,7 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-    protected List<String> doInBackground(String... params) {
+    protected ArrayList<String> doInBackground(String... params) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -44,17 +44,21 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
         // Will contain the raw JSON response as a string.
         String trailersStr = null;
 
+        Log.v(LOG_TAG, "Try Trailers");
+
         try {
             /**
              * Trailers
              */
-            final String TRAILERS_BASE_URL = "http://api.themoviedb.org/3/discover/movie/" + mMovie.getId() + "/videos?";
+            final String TRAILERS_BASE_URL = "http://api.themoviedb.org/3/movie/" + mMovie.getId() + "/videos?";
 
             // Build the Uri to fetch trailers
             Uri uri = Uri.parse(TRAILERS_BASE_URL)
                     .buildUpon()
                     .appendQueryParameter(KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
+
+            Log.v(LOG_TAG, "URI FOR TRAILERS: " + uri.toString());
 
             // Create the URL
             URL url = new URL(uri.toString());
@@ -85,10 +89,12 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
             trailersStr = buffer.toString();
 
         } catch (IOException e) {
+            Log.v(LOG_TAG, "FAILEDDDDDDDDDDD");
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the movie data, don't parse
             return null;
         } finally {
+            Log.v(LOG_TAG, "WE DONE");
             if (urlConnection != null) urlConnection.disconnect();
             if (reader != null) {
                 try { reader.close(); }
@@ -108,22 +114,17 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-    protected void onPostExecute(List<String> trailers) {
+    protected void onPostExecute(ArrayList<String> trailers) {
         // Clears the adapter to set new information
         super.onPostExecute(trailers);
         if (trailers != null) {
-            /**
-             * TODO ?
-             */
             mMovie.setTrailers(trailers);
-            mImageAdapter.notifyDataSetChanged();
         }
     }
 
-    private List<String> getMovieDataFromJson(String trailersStr) throws JSONException {
+    private ArrayList<String> getMovieDataFromJson(String trailersStr) throws JSONException {
 
         final String MDB_RESULTS = "results";
-        final String MDB_NAME = "name";
         final String MDB_YOUTUBE_KEY = "key";
 
         JSONObject trailersJson = new JSONObject(trailersStr);
@@ -131,20 +132,14 @@ public class FetchTrailersTask extends AsyncTask<String, Void, List<String>> {
 
         int num_trailers = trailersArray.length();
 
-        List<String> trailers = new ArrayList<>();
+        ArrayList<String> trailers = new ArrayList<>();
 
         for (int i = 0; i < num_trailers; i++) {
             // Grab trailer object
             JSONObject trailerInfo = trailersArray.getJSONObject(i);
 
-            // Get author and content of trailer
-            String trailerName = trailerInfo.getString(MDB_NAME);
-            String trailerKey = trailerInfo.getString(MDB_YOUTUBE_KEY);
-
-            // Add trailer author and content
-            trailers.add(trailerName);
-            trailers.add(trailerKey);
-
+            // Add trailer  content
+            trailers.add(trailerInfo.getString(MDB_YOUTUBE_KEY));
         }
 
         return trailers;

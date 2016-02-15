@@ -111,6 +111,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         if (movies != null) {
             mMoviesAdapter.clear();
             for (Movie movie : movies) {
+                new FetchTrailersTask(movie, mMoviesAdapter).execute();
                 mMoviesAdapter.add(movie);
             }
             mMoviesAdapter.notifyDataSetChanged();
@@ -147,10 +148,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
                     movie.getString(MDB_POSTER)
             ));
 
-            // BIG COOKIE!!!!
-            new FetchReviewsTask(movies.get(i), mMoviesAdapter);
-            new FetchTrailersTask(movies.get(i), mMoviesAdapter);
-
+            //new FetchReviewsTask(movies.get(i), mMoviesAdapter);
         }
 
         return movies;

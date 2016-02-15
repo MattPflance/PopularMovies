@@ -21,7 +21,7 @@ import java.util.List;
  * An AsyncTask that grabs reviews for a particular movie
  */
 
-public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
+public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<String>> {
 
     private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
     private final String KEY_PARAM = "api_key";
@@ -35,7 +35,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-    protected List<String> doInBackground(String... params) {
+    protected ArrayList<String> doInBackground(String... params) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -45,7 +45,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
         String reviewsStr = null;
 
         try {
-            final String REVIEWS_BASE_URL = "http://api.themoviedb.org/3/discover/movie/" + mMovie.getId() + "/reviews?";
+            final String REVIEWS_BASE_URL = "http://api.themoviedb.org/3/movie/" + mMovie.getId() + "/reviews?";
 
             // Build the Uri to fetch reviews
             Uri uri = Uri.parse(REVIEWS_BASE_URL)
@@ -105,7 +105,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-    protected void onPostExecute(List<String> reviews) {
+    protected void onPostExecute(ArrayList<String> reviews) {
         // Clears the adapter to set new information
         super.onPostExecute(reviews);
         if (reviews != null) {
@@ -117,7 +117,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
         }
     }
 
-    private List<String> getMovieDataFromJson(String reviewsStr) throws JSONException {
+    private ArrayList<String> getMovieDataFromJson(String reviewsStr) throws JSONException {
 
         final String MDB_RESULTS = "results";
         final String MDB_AUTHOR = "author";
@@ -128,7 +128,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, List<String>> {
 
         int num_reviews = reviewsArray.length();
 
-        List<String> reviews = new ArrayList<>();
+        ArrayList<String> reviews = new ArrayList<>();
 
         for (int i = 0; i < num_reviews; i++) {
             // Grab review object

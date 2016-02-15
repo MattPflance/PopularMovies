@@ -2,7 +2,7 @@ package com.mattpflance.popularmovies;
 
 import android.media.Image;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A class that holds a Movie's content
@@ -11,7 +11,7 @@ public class Movie {
 
     private String mTitle, mOverview, mReleaseDate, mRating, mVotes, mId, mPosterLink;
 //    private Image mPoster;
-    private List<String> mTrailers, mReviews;
+    private ArrayList<String> mTrailers, mReviews;
 
     public Movie (String title,
                   String overview,
@@ -44,10 +44,10 @@ public class Movie {
 //    public Image getPoster() {
 //        return mPoster;
 //    }
-    public List<String> getTrailers() { return mTrailers; }
-    public List<String> getReviews() { return mReviews; }
+    public ArrayList<String> getTrailers() { return mTrailers; }
+    public ArrayList<String> getReviews() { return mReviews; }
 
-    public void setTrailers(List<String> trailers) { mTrailers = trailers; }
-    public void setReviews(List<String> reviews) { mReviews = reviews; }
+    public void setTrailers(ArrayList<String> trailers) { mTrailers = trailers; }
+    public void setReviews(ArrayList<String> reviews) { mReviews = reviews; }
 
 }
