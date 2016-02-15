@@ -3,6 +3,7 @@ package com.mattpflance.popularmovies;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -114,6 +115,10 @@ public class DetailFragment extends Fragment {
                     public void onClick(View v) {
                         // Use key to launch YouTube intent
                         String key = mTrailers.get(trailerPosition);
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.youtube.com/watch?v=" + mTrailers.get(trailerPosition))
+                        ));
                     }
                 });
                 LinearLayout.LayoutParams imageButtonParams = new LinearLayout.LayoutParams(
