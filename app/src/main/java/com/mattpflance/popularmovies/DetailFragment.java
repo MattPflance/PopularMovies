@@ -1,13 +1,16 @@
 package com.mattpflance.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -16,34 +19,51 @@ import com.squareup.picasso.Picasso;
  */
 public class DetailFragment extends Fragment {
 
-    public DetailFragment() {
-    }
+    private Context mContext;
+
+    private TextView mTitle;
+    private ImageView mThumbnail;
+    private TextView mReleaseDate;
+    private TextView mRating;
+    private ImageButton mFavouriteButton;
+    private TextView mOverview;
+
+    public DetailFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mContext = getContext();
+
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Bundle bundle = getArguments();
 
-        TextView title = (TextView) view.findViewById(R.id.movie_title);
-        title.setText(bundle.getString("TITLE"));
+        mTitle = (TextView) view.findViewById(R.id.movie_title);
+        mTitle.setText(bundle.getString("TITLE"));
 
-        ImageView thumbnail = (ImageView) view.findViewById(R.id.movie_thumbnail);
-        String url = "http://image.tmdb.org/t/p/w185" + bundle.getString("LINK");
-        Picasso.with(getActivity()).load(url).into(thumbnail);
+        mThumbnail = (ImageView) view.findViewById(R.id.movie_thumbnail);
+        Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185" + bundle.getString("LINK")).into(mThumbnail);
 
-        title = (TextView) view.findViewById(R.id.release_date);
-        String dateStr = "Released " + bundle.getString("DATE");
-        title.setText(dateStr);
+        mReleaseDate = (TextView) view.findViewById(R.id.release_date);
+        mReleaseDate.setText(String.format(mContext.getString(R.string.format_release_date), bundle.getString("DATE")));
 
-        title = (TextView) view.findViewById(R.id.rating);
-        String ratingsStr = bundle.getString("RATING") + "/10 from " + bundle.getString("VOTES") + " votes";
-        title.setText(ratingsStr);
+        mRating = (TextView) view.findViewById(R.id.rating);
+        mRating.setText(String.format(mContext.getString(R.string.format_ratings), bundle.getString("RATING"),  bundle.getString("VOTES")));
 
-        title = (TextView) view.findViewById(R.id.overview);
-        title.setText(bundle.getString("OVERVIEW"));
+        mFavouriteButton = (ImageButton) view.findViewById(R.id.favourite_button);
+        mFavouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CharSequence toastMsg = mTitle.getText() + " added to Favourites";
+                int duration = Toast.LENGTH_SHORT;
 
+                Toast toast = Toast.makeText(getContext(), toastMsg, duration);
+                toast.show();
+            }
+        });
 
+        mOverview = (TextView) view.findViewById(R.id.overview);
+        mOverview.setText(bundle.getString("OVERVIEW"));
 
         return view;
     }

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
 
     <!-- Activity Titles -->
     <string name="app_name">Popular Movies</string>
@@ -9,7 +9,12 @@
     <string name="action_sort_rating">Sort by Highest Ratings</string>
     <string name="action_favourites">My Favourites</string>
 
+    <!-- Detail text -->
+    <string name="format_release_date">Released on: <xliff:g id="date">%1$s</xliff:g></string>
+    <string name="format_ratings">Rated <xliff:g id="rating">%1$s</xliff:g>/10 with <xliff:g id="votes">%2$s</xliff:g> votes</string>
+
     <!-- Other -->
+    <string name="favourite_button">Favourite</string>
     <string name="image_description">Thumbnail</string>
     <string name="sort_key">SORT</string>
 
