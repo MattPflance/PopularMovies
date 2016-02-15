@@ -132,6 +132,8 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
 
         int num_trailers = trailersArray.length();
 
+        if (num_trailers == 0) return null;
+
         ArrayList<String> trailers = new ArrayList<>();
 
         for (int i = 0; i < num_trailers; i++) {

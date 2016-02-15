@@ -137,13 +137,6 @@ public class MoviesFragment extends Fragment {
     }
 
     private void loadMovies() {
-        // Big Cookie time
         new FetchMoviesTask(mSortingStr, mMoviesAdapter).execute();
-        List<Movie> movies = mMoviesAdapter.getDataSet();
-        for (Movie movie : movies) {
-            Log.v(LOG_TAG, "Fetch Trailers.. Slow?");
-            new FetchTrailersTask(movie, mMoviesAdapter).execute();
-            //new FetchReviewsTask(movie, mMoviesAdapter);
-        }
     }
 }

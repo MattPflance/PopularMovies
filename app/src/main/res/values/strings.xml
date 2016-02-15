@@ -9,10 +9,19 @@
     <string name="action_sort_rating">Sort by Highest Ratings</string>
     <string name="action_favourites">My Favourites</string>
 
-    <!-- Detail text -->
+    <!-- DETAIL TEXT -->
+
+    <!-- Trailers -->
+    <string name="trailers">Trailers:</string>
+    <string name="no_trailers">There are no trailers for this movie yet</string>
     <string name="format_release_date">Released on: <xliff:g id="date">%1$s</xliff:g></string>
     <string name="format_ratings">Rated <xliff:g id="rating">%1$s</xliff:g>/10 with <xliff:g id="votes">%2$s</xliff:g> votes</string>
-    <string name="format_trailer">Trailer #<xliff:g id="number">%1$d</xliff:g></string>
+    <string name="format_trailer">Trailer #<xliff:g id="number">%1$d</xliff:g>: </string>
+
+    <!-- Reviews -->
+    <string name="reviews">Reviews:</string>
+    <string name="no_reviews">There are no reviews for this movie yet</string>
+    <string name="format_review_author"><xliff:g id="author">%1$s</xliff:g> says:</string>
 
 
     <!-- Other -->

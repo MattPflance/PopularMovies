@@ -128,6 +128,8 @@ public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<String>>
 
         int num_reviews = reviewsArray.length();
 
+        if (num_reviews == 0) return null;
+
         ArrayList<String> reviews = new ArrayList<>();
 
         for (int i = 0; i < num_reviews; i++) {

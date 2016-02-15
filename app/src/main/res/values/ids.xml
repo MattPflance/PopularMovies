@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="dynamic_details" type="id" />
     <item name="trailers_layout" type="id" />
     <item name="reviews_layout" type="id" />
 </resources>

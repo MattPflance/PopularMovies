@@ -111,7 +111,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         if (movies != null) {
             mMoviesAdapter.clear();
             for (Movie movie : movies) {
+                // COOOOOOKIIIEEEEEE
                 new FetchTrailersTask(movie, mMoviesAdapter).execute();
+                new FetchReviewsTask(movie, mMoviesAdapter).execute();
                 mMoviesAdapter.add(movie);
             }
             mMoviesAdapter.notifyDataSetChanged();
