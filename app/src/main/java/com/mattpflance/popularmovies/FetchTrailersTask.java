@@ -27,11 +27,9 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
     private final String KEY_PARAM = "api_key";
 
     private Movie mMovie;
-    private ImageAdapter mImageAdapter;
 
-    public FetchTrailersTask(Movie movie, ImageAdapter imageAdapter) {
+    public FetchTrailersTask(Movie movie) {
         mMovie = movie;
-        mImageAdapter = imageAdapter;
     }
 
     @Override
@@ -44,8 +42,6 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
         // Will contain the raw JSON response as a string.
         String trailersStr = null;
 
-        Log.v(LOG_TAG, "Try Trailers");
-
         try {
             /**
              * Trailers
@@ -57,8 +53,6 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
                     .buildUpon()
                     .appendQueryParameter(KEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .build();
-
-            Log.v(LOG_TAG, "URI FOR TRAILERS: " + uri.toString());
 
             // Create the URL
             URL url = new URL(uri.toString());
@@ -89,12 +83,10 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
             trailersStr = buffer.toString();
 
         } catch (IOException e) {
-            Log.v(LOG_TAG, "FAILEDDDDDDDDDDD");
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the movie data, don't parse
             return null;
         } finally {
-            Log.v(LOG_TAG, "WE DONE");
             if (urlConnection != null) urlConnection.disconnect();
             if (reader != null) {
                 try { reader.close(); }

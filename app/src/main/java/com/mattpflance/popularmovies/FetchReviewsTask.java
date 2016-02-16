@@ -27,11 +27,9 @@ public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<String>>
     private final String KEY_PARAM = "api_key";
 
     private Movie mMovie;
-    private ImageAdapter mImageAdapter;
 
-    public FetchReviewsTask(Movie movie, ImageAdapter imageAdapter) {
+    public FetchReviewsTask(Movie movie) {
         mMovie = movie;
-        mImageAdapter = imageAdapter;
     }
 
     @Override
@@ -109,11 +107,11 @@ public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<String>>
         // Clears the adapter to set new information
         super.onPostExecute(reviews);
         if (reviews != null) {
-            /**
-             * TODO ?
-             */
-            mMovie.setReviews(reviews);
-            mImageAdapter.notifyDataSetChanged();
+            int length = reviews.size();
+            for (int i=0; i<length; i+=2) {
+                mMovie.addReviewAuthor(reviews.get(i));
+                mMovie.addReview(reviews.get(i+1));
+            }
         }
     }
 

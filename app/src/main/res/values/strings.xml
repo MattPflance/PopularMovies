@@ -23,9 +23,17 @@
     <string name="no_reviews">There are no reviews for this movie yet</string>
     <string name="format_review_author"><xliff:g id="author">%1$s</xliff:g> says:</string>
 
+    <!-- Toast Message -->
+    <string name="toast"><xliff:g id="title">%1$s</xliff:g> added to Favourites</string>
+
+    <!-- END DETAIL TEXT -->
+
+    <!-- CONTENT PROVIDER -->
+    <string name="content_authority">com.mattpflance.popularmovies.app</string>
 
     <!-- Other -->
     <string name="favourite_button">Favourite</string>
+    <string name="unfavourite_button">Un-Favourite</string>
     <string name="image_description">Thumbnail</string>
     <string name="sort_key">SORT</string>
 

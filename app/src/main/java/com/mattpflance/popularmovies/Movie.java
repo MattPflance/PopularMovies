@@ -1,5 +1,7 @@
 package com.mattpflance.popularmovies;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.Image;
 
 import java.util.ArrayList;
@@ -9,28 +11,58 @@ import java.util.ArrayList;
  */
 public class Movie {
 
-    private String mTitle, mOverview, mReleaseDate, mRating, mVotes, mId, mPosterLink;
-//    private Image mPoster;
-    private ArrayList<String> mTrailers, mReviews;
+    private String mId, mTitle, mReleaseDate, mRating, mVotes,  mPosterLink, mOverview;
+    private Bitmap mPosterBitmap;
+    private ArrayList<String> mTrailers, mReviewAuthors, mReviews;
 
-    public Movie (String title,
-                  String overview,
+    // The constructor that the API will use
+    public Movie (String id,
+                  String title,
                   String releaseDate,
                   String rating,
                   String votes,
-                  String id,
-                  String posterLink) {
-
+                  String posterLink,
+                  String overview) {
+        mId = id;
         mTitle = title;
-        mOverview = overview;
         mReleaseDate = releaseDate;
         mRating = rating;
         mVotes = votes;
-        mId = id;
         mPosterLink = posterLink;
-//        mPoster = poster;
+        mPosterBitmap = null; // Not used with API
+        mOverview = overview;
         mTrailers = null;
-        mReviews = null;
+        // Need to initialize these next lists since we add content
+        // to them and there is no assignment
+        mReviewAuthors = new ArrayList<>();
+        mReviews = new ArrayList<>();
+    }
+
+    // The constructor used when retrieving from a cursor
+    public Movie (Cursor cursor) {
+
+        final int COL_MOVIE_ID = 0;
+        final int COL_TITLE = 1;
+        final int COL_RELEASE_DATE = 2;
+        final int COL_RATING = 3;
+        final int COL_VOTES = 4;
+        final int COL_POSTER = 5;
+        final int COL_OVERVIEW = 6;
+        final int COL_VIDEOS = 7;
+        final int COL_REVIEW_AUTHOR = 8;
+        final int COL_REVIEW_CONTENT = 9;
+
+        mId = cursor.getString(COL_MOVIE_ID);
+        mTitle = cursor.getString(COL_TITLE);
+        mReleaseDate = cursor.getString(COL_RELEASE_DATE);
+        mRating = cursor.getString(COL_RATING);
+        mVotes = cursor.getString(COL_VOTES);
+        mPosterLink = null; // Not used with Cursor
+        mPosterBitmap = Utility.getImage(cursor.getBlob(COL_POSTER));
+        mOverview = cursor.getString(COL_OVERVIEW);
+        mTrailers = Utility.stringToList(cursor.getString(COL_VIDEOS));
+        mReviewAuthors = Utility.stringToList(cursor.getString(COL_REVIEW_AUTHOR));
+        mReviews = Utility.stringToList(cursor.getString(COL_REVIEW_CONTENT));
 
     }
 
@@ -41,13 +73,13 @@ public class Movie {
     public String getVotes() { return mVotes; }
     public String getId() { return mId; }
     public String getPosterLink() { return mPosterLink; }
-//    public Image getPoster() {
-//        return mPoster;
-//    }
+    public Bitmap getPosterBitmap() { return mPosterBitmap; }
     public ArrayList<String> getTrailers() { return mTrailers; }
     public ArrayList<String> getReviews() { return mReviews; }
+    public ArrayList<String> getReviewAuthors() { return mReviewAuthors; }
 
     public void setTrailers(ArrayList<String> trailers) { mTrailers = trailers; }
-    public void setReviews(ArrayList<String> reviews) { mReviews = reviews; }
+    public void addReviewAuthor(String author) { mReviewAuthors.add(author); }
+    public void addReview(String review) { mReviews.add(review); }
 
 }

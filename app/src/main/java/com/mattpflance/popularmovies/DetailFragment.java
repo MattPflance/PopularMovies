@@ -1,8 +1,11 @@
 package com.mattpflance.popularmovies;
 
 import android.app.ActionBar;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
@@ -21,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mattpflance.popularmovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,52 +38,122 @@ public class DetailFragment extends Fragment {
 
     private Context mContext;
 
-    private TextView mTitle;
-    private ImageView mThumbnail;
-    private TextView mReleaseDate;
-    private TextView mRating;
-    private ImageButton mFavouriteButton;
-    private TextView mOverview;
-    private ArrayList<String> mTrailers;
-    private ArrayList<String> mReviews;
+    /**
+     * Alternatively, we could implement Parcelable for Movie
+     * and pass it through the intent. Then we only have 1
+     * private variable that is a Movie.
+     */
+
+    private String mId, mTitle, mReleaseDate, mRating, mVotes,  mPosterLink, mOverview;
+    private Bitmap mPosterBitmap;
+    private ArrayList<String> mTrailers, mReviewAuthors, mReviews;
 
     public DetailFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = getContext();
-
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        final Bundle bundle = getArguments();
 
-        Bundle bundle = getArguments();
+        // Get all the movie values
+        mId = bundle.getString("ID");
+        mTitle = bundle.getString("TITLE");
+        mReleaseDate = bundle.getString("DATE");
+        mRating = bundle.getString("RATING");
+        mVotes = bundle.getString("VOTES");
+        mPosterLink = bundle.getString("LINK");
+        mPosterBitmap = bundle.getParcelable("POSTER");
+        mOverview = bundle.getString("OVERVIEW");
+        mTrailers = bundle.getStringArrayList("VIDEOS");
+        mReviewAuthors = bundle.getStringArrayList("AUTHORS");
+        mReviews = bundle.getStringArrayList("REVIEWS");
 
-        mTitle = (TextView) view.findViewById(R.id.movie_title);
-        mTitle.setText(bundle.getString("TITLE"));
+        // Set all the Views with the values
+        ((TextView) view.findViewById(R.id.movie_title)).setText(mTitle);
+        ((TextView) view.findViewById(R.id.release_date)).setText(String.format(getString(R.string.format_release_date), mReleaseDate));
+        ((TextView) view.findViewById(R.id.rating)).setText(
+                String.format(mContext.getString(R.string.format_ratings),
+                        mRating,
+                        mVotes));
+        ((TextView) view.findViewById(R.id.overview)).setText(mOverview);
+        // Declare final so we can use in the onClick listener
+        final ImageView iv = (ImageView) view.findViewById(R.id.movie_thumbnail);
+        if (mPosterBitmap != null) {
+            // Loading from Cursor
+            iv.setImageBitmap(mPosterBitmap);
 
-        mThumbnail = (ImageView) view.findViewById(R.id.movie_thumbnail);
-        Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185" + bundle.getString("LINK")).into(mThumbnail);
+        } else if (mPosterLink != null) {
+            // Loading with API
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185" + mPosterLink).into(iv);
+        } else {
+            // No image
+            Picasso.with(getActivity()).load(R.drawable.image_not_available).into(iv);
+        }
 
-        mReleaseDate = (TextView) view.findViewById(R.id.release_date);
-        mReleaseDate.setText(String.format(mContext.getString(R.string.format_release_date), bundle.getString("DATE")));
+        if (mPosterBitmap != null) {
 
-        mRating = (TextView) view.findViewById(R.id.rating);
-        mRating.setText(String.format(mContext.getString(R.string.format_ratings), bundle.getString("RATING"),  bundle.getString("VOTES")));
+            // Loading from cursor and we show the Remove From Favourites button
 
-        mFavouriteButton = (ImageButton) view.findViewById(R.id.favourite_button);
-        mFavouriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CharSequence toastMsg = mTitle.getText() + " added to Favourites";
-                int duration = Toast.LENGTH_SHORT;
+//            ImageButton ib = (ImageButton) view.findViewById(R.id.favourite_button);
+//            ib.setBackgroundResource(R.drawable.favourite_star);
+//            ib.setContentDescription(getString(R.string.favourite_button));
+//
+//            ib.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
 
-                Toast toast = Toast.makeText(getContext(), toastMsg, duration);
-                toast.show();
-            }
-        });
+//                    // Remove this movie from the db
+//                    getContext().getContentResolver().delete(MovieContract.FavouritesEntry.CONTENT_URI, movieValues);
+//
+//                    // Show Toast to let user know that the movie was stored in the DB
+//                    CharSequence toastMsg = String.format(getString(R.string.toast), mTitle);
+//                    int duration = Toast.LENGTH_SHORT;
+//                    Toast toast = Toast.makeText(getContext(), toastMsg, duration);
+//                    toast.show();
+//                }
+//            });
 
-        mOverview = (TextView) view.findViewById(R.id.overview);
-        mOverview.setText(bundle.getString("OVERVIEW"));
 
+        } else {
+
+            // We are loading from API and we show the Favourites button
+
+            ImageButton ib = (ImageButton) view.findViewById(R.id.favourite_button);
+            ib.setBackgroundResource(R.drawable.favourite_star);
+            ib.setContentDescription(getString(R.string.favourite_button));
+            ib.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    ContentValues movieValues = new ContentValues();
+
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_MOVIE_ID, mId);
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_TITLE, mTitle);
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_RELEASE, mReleaseDate);
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_RATING, mRating);
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_VOTES, mVotes);
+                    // Convert image from poster to bitmap
+                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
+                    // Place in DB using a BLOB (byte[])
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_POSTER, Utility.getBytes(bitmap));
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_OVERVIEW, mOverview);
+                    // These next ArrayList<String>s are converted to Strings
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_VIDEOS, Utility.listToString(mTrailers));
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_REVIEW_AUTHOR, Utility.listToString(mReviewAuthors));
+                    movieValues.put(MovieContract.FavouritesEntry.COLUMN_REVIEW_CONTENT, Utility.listToString(mReviews));
+
+                    // Now add this to the data base
+                    getContext().getContentResolver().insert(MovieContract.FavouritesEntry.CONTENT_URI, movieValues);
+
+                    // Show Toast to let user know that the movie was stored in the DB
+                    CharSequence toastMsg = String.format(getString(R.string.toast), mTitle);
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getContext(), toastMsg, duration);
+                    toast.show();
+                }
+            });
+        }
         /**
          * Now we need to dynamically add Trailers and Reviews
          */
@@ -166,23 +240,22 @@ public class DetailFragment extends Fragment {
         reviewTitle.setText(getString(R.string.reviews));
         dynamicLL.addView(reviewTitle);
 
+        mReviewAuthors = bundle.getStringArrayList("AUTHORS");
         mReviews = bundle.getStringArrayList("REVIEWS");
 
-        if (mReviews != null) {
+        if (mReviews != null && mReviews.size() != 0) {
 
-            Log.v(LOG_TAG, "Reviews exist");
-
-            // Get the length of trailers
+            // Get the length of reviews AND authors
             int length = mReviews.size();
 
-            // Create layout for Trailers
-            for (int i=0; i<length; i += 2) {
+            // Create layout for Reviews
+            for (int i=0; i<length; i ++) {
 
                 // Text View for Review Author
                 TextView authorTV = new TextView(mContext);
                 authorTV.setTextAppearance(mContext, R.style.boldText);
                 authorTV.setTextSize(Utility.dpToPx(mContext, 6));
-                authorTV.setText(String.format(mContext.getString(R.string.format_review_author), mReviews.get(i)));
+                authorTV.setText(String.format(mContext.getString(R.string.format_review_author), mReviewAuthors.get(i)));
                 dynamicLL.addView(authorTV);
 
                 // Text View for the review's content
@@ -191,7 +264,7 @@ public class DetailFragment extends Fragment {
                 TextView contentTV = new TextView(mContext);
                 contentTV.setPadding(pad, pad, pad, pad);
                 contentTV.setTextSize(Utility.dpToPx(mContext, 5));
-                contentTV.setText(mReviews.get(i + 1));
+                contentTV.setText(mReviews.get(i));
                 dynamicLL.addView(contentTV);
 
             }
@@ -212,7 +285,5 @@ public class DetailFragment extends Fragment {
 
         return view;
     }
-
-
 
 }

@@ -3,6 +3,7 @@ package com.mattpflance.popularmovies;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -58,13 +59,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 int itemPosition = mRecyclerView.getChildAdapterPosition(view);
                 Movie movie = mDataSet.get(itemPosition);
                 Intent intent = new Intent(mContext, DetailActivity.class);
+                intent.putExtra("ID", movie.getId());
                 intent.putExtra("TITLE", movie.getTitle());
-                intent.putExtra("LINK", movie.getPosterLink());
-                intent.putExtra("OVERVIEW", movie.getOverview());
+                intent.putExtra("DATE", movie.getReleaseDate());
                 intent.putExtra("RATING", movie.getRating());
                 intent.putExtra("VOTES", movie.getVotes());
-                intent.putExtra("DATE", movie.getReleaseDate());
+                intent.putExtra("LINK", movie.getPosterLink());
+                intent.putExtra("POSTER", movie.getPosterBitmap());
+                intent.putExtra("OVERVIEW", movie.getOverview());
                 intent.putStringArrayListExtra("TRAILERS", movie.getTrailers());
+                intent.putStringArrayListExtra("AUTHORS", movie.getReviewAuthors());
                 intent.putStringArrayListExtra("REVIEWS", movie.getReviews());
                 mContext.startActivity(intent);
             }
@@ -75,10 +79,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         String posterLink = getMovie(position).getPosterLink();
-        if (posterLink == null) {
+        Bitmap poster = getMovie(position).getPosterBitmap();
+        if (posterLink == null && poster == null) {
+            // There is actually no image
             Picasso.with(mContext).load(R.drawable.image_not_available).into(viewHolder.posterView);
-        } else {
+        } else if (poster == null) {
+            // Grabbing the image from API
             Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185" + posterLink).into(viewHolder.posterView);
+        } else {
+            // Loading from favourites
+            viewHolder.posterView.setImageBitmap(poster);
         }
     }
 

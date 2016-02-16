@@ -1,8 +1,12 @@
 package com.mattpflance.popularmovies;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.mattpflance.popularmovies.data.MovieContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,16 +27,25 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
     private final String KEY_PARAM = "api_key";
 
+    private Context mContext;
     private String mSortingStr;
     private ImageAdapter mMoviesAdapter;
 
-    public FetchMoviesTask(String sort, ImageAdapter imageAdapter) {
+    public FetchMoviesTask(Context context, String sort, ImageAdapter imageAdapter) {
+        mContext = context;
         mSortingStr = sort;
         mMoviesAdapter = imageAdapter;
     }
 
     @Override
     protected List<Movie> doInBackground(String... params) {
+
+        // First check to see if we want to load our favourites or not
+        if (mSortingStr.equals("favourites")) {
+            Log.v(LOG_TAG, "In");
+            return loadFavourites();
+        }
+
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -111,9 +124,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         if (movies != null) {
             mMoviesAdapter.clear();
             for (Movie movie : movies) {
-                // COOOOOOKIIIEEEEEE
-                new FetchTrailersTask(movie, mMoviesAdapter).execute();
-                new FetchReviewsTask(movie, mMoviesAdapter).execute();
+                // Don't need to make a request to API if favourites
+                if (mSortingStr != "favourites") {
+                    // COOOOOOKIIIEEEEEE
+                    new FetchTrailersTask(movie).execute();
+                    new FetchReviewsTask(movie).execute();
+                }
                 mMoviesAdapter.add(movie);
             }
             mMoviesAdapter.notifyDataSetChanged();
@@ -141,20 +157,44 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             JSONObject movie = moviesArray.getJSONObject(i);
 
             movies.add(new Movie(
+                    movie.getString(MDB_MOVIE_ID),
                     movie.getString(MDB_TITLE),
-                    movie.getString(MDB_OVERVIEW),
                     movie.getString(MDB_RELEASE),
                     movie.getString(MDB_RATING),
                     movie.getString(MDB_VOTES),
-                    movie.getString(MDB_MOVIE_ID),
-                    movie.getString(MDB_POSTER)
+                    movie.getString(MDB_POSTER),
+                    movie.getString(MDB_OVERVIEW)
             ));
 
-            //new FetchReviewsTask(movies.get(i), mMoviesAdapter);
         }
 
         return movies;
 
+    }
+
+    private List<Movie> loadFavourites() {
+        // Get cursor of all movies
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.FavouritesEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+        // Return if cursor is empty
+        if (cursor == null) return null;
+
+        ArrayList<Movie> movies = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+
+            movies.add(new Movie(cursor));
+
+        }
+
+        cursor.close();
+
+        return movies;
     }
 
     }

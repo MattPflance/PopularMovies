@@ -13,7 +13,7 @@ import com.mattpflance.popularmovies.data.MovieContract.FavouritesEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
 
     static final String DATABASE_NAME = "popularmovies.db";
 
@@ -23,40 +23,28 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        // Create a table to hold locations.  A location consists of the string supplied in the
-        // location setting, the city name, and the latitude and longitude
-//        final String SQL_CREATE_IMAGES_TABLE = "CREATE TABLE " + ImagesEntry.TABLE_NAME + " (" +
-//                ImagesEntry._ID + " INTEGER PRIMARY KEY," +
-//                ImagesEntry.COLUMN_POSTER_PATH + " TEXT UNIQUE NOT NULL, " +
-//                " );";
+        // Create table to hold a user's favourite movie
 
         final String SQL_CREATE_FAVOURITES_TABLE = "CREATE TABLE " + FavouritesEntry.TABLE_NAME + " (" +
-                FavouritesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                FavouritesEntry.COLUMN_IMAGES_KEY + " INTEGER NOT NULL, " +
+                FavouritesEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
                 FavouritesEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                FavouritesEntry.COLUMN_RELEASE + " TEXT NOT NULL, " +
+                FavouritesEntry.COLUMN_RATING + " TEXT NOT NULL, " +
+                FavouritesEntry.COLUMN_VOTES + " TEXT NOT NULL, " +
+                FavouritesEntry.COLUMN_POSTER + " BLOB, " +
                 FavouritesEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
-                FavouritesEntry.COLUMN_RELEASE + " TEXT NOT NULL," +
-                FavouritesEntry.COLUMN_RATING + " REAL NOT NULL, " +
-                FavouritesEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL " + // Can be null ?
-//                // Set up the location column as a foreign key to location table.
-//                " FOREIGN KEY (" + FavouritesEntry.COLUMN_IMAGES_KEY + ") REFERENCES " +
-//                ImagesEntry.TABLE_NAME + " (" + ImagesEntry._ID + "), " +
+                FavouritesEntry.COLUMN_VIDEOS + " TEXT, " +
+                FavouritesEntry.COLUMN_REVIEW_AUTHOR + " TEXT, " +
+                FavouritesEntry.COLUMN_REVIEW_CONTENT + " TEXT, " +
                 // Ensure there is only one movie title
-                " UNIQUE (" + FavouritesEntry.COLUMN_TITLE + ") ON CONFLICT REPLACE);";
+                " UNIQUE (" + FavouritesEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
-//        sqLiteDatabase.execSQL(SQL_CREATE_IMAGES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FAVOURITES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
-        // Note that this only fires if you change the version number for your database.
-        // It does NOT depend on the version number for your application.
-        // If you want to update the schema without wiping data, commenting out the next 2 lines
-        // should be your top priority before modifying this method.
-//        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ImagesEntry.TABLE_NAME);
+        // Just drop data and re-sync
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavouritesEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }

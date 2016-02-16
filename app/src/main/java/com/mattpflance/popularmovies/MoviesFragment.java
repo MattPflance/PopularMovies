@@ -3,6 +3,7 @@ package com.mattpflance.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -40,13 +41,10 @@ import java.util.List;
 public class MoviesFragment extends Fragment {
 
     private final String LOG_TAG = MoviesFragment.class.getSimpleName();
-    private final String DEFAULT_SORT = "popularity.desc";
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ImageAdapter mMoviesAdapter;
-
-    private String mSortingStr;
+    private static ImageAdapter mMoviesAdapter;
 
     public MoviesFragment() {
     }
@@ -54,18 +52,16 @@ public class MoviesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        mSortingStr = sharedPref.getString(getString(R.string.sort_key), DEFAULT_SORT);
-
         // Now find the RecyclerView we want to bind our adapter to
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.gridview_movies);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_movies);
+
+        mRecyclerView.setBackgroundColor(Color.BLACK);
 
         // Set the LayoutManager to the RecyclerView
         int orientation = getResources().getConfiguration().orientation;
@@ -88,55 +84,6 @@ public class MoviesFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        loadMovies();
-    }
+    public static ImageAdapter getMoviesAdapter() { return mMoviesAdapter; }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.movies_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort_by_popular) {
-            mSortingStr = "popularity.desc";
-            editor.putString(getString(R.string.sort_key), mSortingStr);
-            editor.commit();
-            loadMovies();
-            return true;
-        } else if (id == R.id.action_sort_by_high_rating) {
-            // Include movies with at least 50 ratings for filtering
-            mSortingStr = "vote_average.desc";
-            editor.putString(getString(R.string.sort_key), mSortingStr);
-            editor.commit();
-            loadMovies();
-            return true;
-        } else if (id == R.id.action_favourites) {
-            // Include movies with at least 50 ratings for filtering
-            mSortingStr = "favourites";
-            editor.putString(getString(R.string.sort_key), mSortingStr);
-            editor.commit();
-            loadMovies();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void loadMovies() {
-        new FetchMoviesTask(mSortingStr, mMoviesAdapter).execute();
-    }
 }
