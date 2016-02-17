@@ -134,6 +134,7 @@ public class FetchTrailersTask extends AsyncTask<String, Void, ArrayList<String>
 
             // Add trailer  content
             trailers.add(trailerInfo.getString(MDB_YOUTUBE_KEY));
+
         }
 
         return trailers;

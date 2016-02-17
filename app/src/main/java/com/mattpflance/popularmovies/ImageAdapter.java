@@ -1,17 +1,15 @@
 package com.mattpflance.popularmovies;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -34,10 +32,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView posterView;
+        public View selectedView;
 
         public ViewHolder(View view) {
             super(view);
             posterView = (ImageView) view.findViewById(R.id.movie_poster_image);
+            selectedView = view.findViewById(R.id.selector);
         }
 
     }
@@ -52,25 +52,54 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Called when RecyclerView needs a new RecyclerView.ViewHolder
         // of the given type to represent an item.
-        View movieItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item, parent, false);
+        final View movieItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item, parent, false);
         movieItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int itemPosition = mRecyclerView.getChildAdapterPosition(view);
+
+                // Add data into a bundle
+                Bundle bundle = new Bundle();
+                int itemPosition = mRecyclerView.getChildLayoutPosition(view);
                 Movie movie = mDataSet.get(itemPosition);
-                Intent intent = new Intent(mContext, DetailActivity.class);
-                intent.putExtra("ID", movie.getId());
-                intent.putExtra("TITLE", movie.getTitle());
-                intent.putExtra("DATE", movie.getReleaseDate());
-                intent.putExtra("RATING", movie.getRating());
-                intent.putExtra("VOTES", movie.getVotes());
-                intent.putExtra("LINK", movie.getPosterLink());
-                intent.putExtra("POSTER", movie.getPosterBitmap());
-                intent.putExtra("OVERVIEW", movie.getOverview());
-                intent.putStringArrayListExtra("TRAILERS", movie.getTrailers());
-                intent.putStringArrayListExtra("AUTHORS", movie.getReviewAuthors());
-                intent.putStringArrayListExtra("REVIEWS", movie.getReviews());
-                mContext.startActivity(intent);
+
+                bundle.putString("ID", movie.getId());
+                bundle.putString("TITLE", movie.getTitle());
+                bundle.putString("DATE", movie.getReleaseDate());
+                bundle.putString("RATING", movie.getRating());
+                bundle.putString("VOTES", movie.getVotes());
+                bundle.putString("LINK", movie.getPosterLink());
+                bundle.putParcelable("POSTER", movie.getPosterBitmap());
+                bundle.putString("OVERVIEW", movie.getOverview());
+                bundle.putStringArrayList("VIDEOS", movie.getTrailers());
+                bundle.putStringArrayList("AUTHORS", movie.getReviewAuthors());
+                bundle.putStringArrayList("REVIEWS", movie.getReviews());
+
+                if (MainActivity.getTwoPane()) {
+
+                    // Remove any outstanding selections
+                    for (Movie m : mDataSet) {
+                        m.setSelected(false);
+                    }
+                    // Update selection
+                    movie.setSelected(true);
+
+                    // Notify movies have been changed
+                    notifyDataSetChanged();
+
+                    // Replace the fragment and do not launch intent
+                    DetailFragment fragment = new DetailFragment();
+                    fragment.setArguments(bundle);
+
+                    ((FragmentActivity) view.getContext()).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.detail_container, fragment, MainActivity.getDetailfragmentTag())
+                            .commit();
+                } else {
+
+                    // Launch intent
+                    Intent intent = new Intent(mContext, DetailActivity.class);
+                    intent.putExtras(bundle);
+                    mContext.startActivity(intent);
+                }
             }
         });
         return new ViewHolder(movieItemView);
@@ -89,6 +118,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         } else {
             // Loading from favourites
             viewHolder.posterView.setImageBitmap(poster);
+        }
+
+        if (getMovie(position).isSelected()) {
+            viewHolder.selectedView.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.selectedView.setVisibility(View.INVISIBLE);
         }
     }
 

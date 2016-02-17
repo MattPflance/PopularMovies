@@ -15,7 +15,8 @@
     <string name="trailers">Trailers:</string>
     <string name="no_trailers">There are no trailers for this movie yet</string>
     <string name="format_release_date">Released on: <xliff:g id="date">%1$s</xliff:g></string>
-    <string name="format_ratings">Rated <xliff:g id="rating">%1$s</xliff:g>/10 with <xliff:g id="votes">%2$s</xliff:g> votes</string>
+    <string name="format_ratings">Rating: <xliff:g id="rating">%1$s</xliff:g>/10</string>
+    <string name="format_votes"><xliff:g id="votes">%1$s</xliff:g> votes</string>
     <string name="format_trailer">Trailer #<xliff:g id="number">%1$d</xliff:g>: </string>
 
     <!-- Reviews -->
@@ -25,6 +26,8 @@
 
     <!-- Toast Message -->
     <string name="toast"><xliff:g id="title">%1$s</xliff:g> added to Favourites</string>
+
+    <string name="action_share">Share</string>
 
     <!-- END DETAIL TEXT -->
 

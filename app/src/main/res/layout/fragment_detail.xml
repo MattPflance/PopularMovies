@@ -13,9 +13,9 @@
 
         <TextView android:id="@+id/movie_title"
             android:layout_width="match_parent"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:layout_height="100dp"
-            android:textSize="13pt"
+            android:padding="@dimen/detail_padding"
+            android:layout_height="150dp"
+            android:textSize="14pt"
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:background="@color/colorPrimaryLight"
@@ -31,28 +31,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:padding="@dimen/activity_horizontal_margin"
                 android:orientation="vertical" >
 
                 <TextView android:id="@+id/release_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin" />
+                    android:layout_margin="@dimen/vert_grid_spacing" />
 
                 <TextView android:id="@+id/rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin" />
+                    android:layout_margin="@dimen/vert_grid_spacing" />
+
+                <TextView android:id="@+id/votes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/vert_grid_spacing" />
 
                 <ImageButton android:id="@+id/favourite_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin" />
+                    android:layout_margin="@dimen/vert_grid_spacing" />
 
             </LinearLayout>
 
             <ImageView android:id="@+id/movie_thumbnail"
                 android:layout_width="100dp"
                 android:layout_height="200dp"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"

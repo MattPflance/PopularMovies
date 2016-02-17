@@ -14,6 +14,7 @@ public class Movie {
     private String mId, mTitle, mReleaseDate, mRating, mVotes,  mPosterLink, mOverview;
     private Bitmap mPosterBitmap;
     private ArrayList<String> mTrailers, mReviewAuthors, mReviews;
+    private boolean mIsSelected; // This is for tablet views
 
     // The constructor that the API will use
     public Movie (String id,
@@ -36,6 +37,7 @@ public class Movie {
         // to them and there is no assignment
         mReviewAuthors = new ArrayList<>();
         mReviews = new ArrayList<>();
+        mIsSelected = false;
     }
 
     // The constructor used when retrieving from a cursor
@@ -63,7 +65,7 @@ public class Movie {
         mTrailers = Utility.stringToList(cursor.getString(COL_VIDEOS));
         mReviewAuthors = Utility.stringToList(cursor.getString(COL_REVIEW_AUTHOR));
         mReviews = Utility.stringToList(cursor.getString(COL_REVIEW_CONTENT));
-
+        mIsSelected = false;
     }
 
     public String getTitle() { return mTitle; }
@@ -77,9 +79,11 @@ public class Movie {
     public ArrayList<String> getTrailers() { return mTrailers; }
     public ArrayList<String> getReviews() { return mReviews; }
     public ArrayList<String> getReviewAuthors() { return mReviewAuthors; }
+    public boolean isSelected() { return mIsSelected; }
 
     public void setTrailers(ArrayList<String> trailers) { mTrailers = trailers; }
     public void addReviewAuthor(String author) { mReviewAuthors.add(author); }
     public void addReview(String review) { mReviews.add(review); }
+    public void setSelected(boolean selection) { mIsSelected = selection; }
 
 }
