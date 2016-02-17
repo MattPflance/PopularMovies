@@ -34,6 +34,12 @@
     <!-- CONTENT PROVIDER -->
     <string name="content_authority">com.mattpflance.popularmovies.app</string>
 
+
+    <!-- INTERNET CONNECTIVITY ALERT -->
+    <string name="internet_title">No Internet Connection</string>
+    <string name="internet_message">Internet not available. Unable to load movies.</string>
+    <string name="internet_close">CLOSE</string>
+
     <!-- Other -->
     <string name="favourite_button">Favourite</string>
     <string name="unfavourite_button">Un-Favourite</string>

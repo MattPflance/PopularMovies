@@ -1,11 +1,13 @@
 package com.mattpflance.popularmovies;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private static boolean mTwoPane;
     private String mSortingStr;
     private ImageAdapter mMoviesAdapter;
-    private AsyncTask mAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMoviesAdapter = MoviesFragment.getMoviesAdapter();
 
-        mAsyncTask = loadMovies();
+        loadMovies();
 
         if (findViewById(R.id.detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
@@ -99,7 +100,33 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private AsyncTask loadMovies() { return new FetchMoviesTask(this, mSortingStr, mMoviesAdapter).execute(); }
+    private void loadMovies() {
+
+        /**
+         * Check for internet connectivity whenever we want to call the API.
+         * Display an alert whenever we don't have connection.
+         */
+
+        if (Utility.isConnectedToInternet(this) || mSortingStr.equals("favourites")) {
+            new FetchMoviesTask(this, mSortingStr, mMoviesAdapter).execute();
+        } else {
+            try {
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.internet_title))
+                        .setMessage(getString(R.string.internet_message))
+                        .setPositiveButton(getString(R.string.internet_close), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+            catch(Exception e) {
+                Log.d(LOG_TAG, "Show Dialog: " + e.getMessage());
+            }
+        }
+    }
 
     public static boolean getTwoPane() { return mTwoPane; }
     public static String getDetailfragmentTag() { return DETAILFRAGMENT_TAG; }

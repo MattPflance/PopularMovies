@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -56,5 +58,16 @@ public class Utility {
         // str was generated using Gson. Convert back to ArrayList
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         return new Gson().fromJson(str, type);
+    }
+
+    // Check the current state of internet connection
+    public static boolean isConnectedToInternet(Context context) {
+
+        // Query active network
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }
