@@ -29,11 +29,16 @@ public class MovieContract {
 
     // The path for our database
     public static final String PATH_FAVOURITES = "favourites";
+    public static final String PATH_MOVIE = "movie";
 
     /* Inner class that defines the table contents of the weather table */
     public static final class FavouritesEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVOURITES).build();
+        public static final Uri CONTENT_ITEM_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FAVOURITES)
+                .appendPath(PATH_MOVIE)
+                .build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVOURITES;

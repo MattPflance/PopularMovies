@@ -24,6 +24,7 @@ public class MovieProvider extends ContentProvider {
 
     // This is all we will ever need to query
     static final int ALL_MOVIES = 100;
+    static final int MOVIE = 101;
 
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
 
@@ -46,6 +47,7 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_FAVOURITES, ALL_MOVIES);
+        matcher.addURI(authority, MovieContract.PATH_FAVOURITES + "/*", MOVIE);
         return matcher;
     }
 
@@ -64,6 +66,8 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case ALL_MOVIES:
                 return FavouritesEntry.CONTENT_TYPE;
+            case MOVIE:
+                return FavouritesEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -102,14 +106,13 @@ public class MovieProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match) {
-            case ALL_MOVIES: {
+            case MOVIE:
                 long _id = db.insert(FavouritesEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = FavouritesEntry.CONTENT_URI;
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
-            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -125,7 +128,7 @@ public class MovieProvider extends ContentProvider {
         // this makes delete all rows return the number of rows deleted
         if ( null == selection ) selection = "1";
         switch (match) {
-            case ALL_MOVIES:
+            case MOVIE:
                 rowsDeleted = db.delete(FavouritesEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:

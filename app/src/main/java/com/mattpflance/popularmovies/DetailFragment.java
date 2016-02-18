@@ -87,6 +87,8 @@ public class DetailFragment extends Fragment {
             mReviews = bundle.getStringArrayList("REVIEWS");
         } else {
 
+            // Implement call back to fix this problem
+
             view.setVisibility(View.GONE);
 
             return view;
@@ -120,7 +122,24 @@ public class DetailFragment extends Fragment {
 
             // Loading from cursor and we show the Remove From Favourites button
 
-            ((ImageButton) view.findViewById(R.id.favourite_button)).setVisibility(View.GONE);
+            ImageButton ib = (ImageButton) view.findViewById(R.id.favourite_button);
+            ib.setBackgroundResource(R.drawable.unfavourite);
+            ib.setContentDescription(getString(R.string.unfavourite_button));
+            ib.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    getContext().getContentResolver().delete(MovieContract.FavouritesEntry.CONTENT_ITEM_URI,
+                            MovieContract.FavouritesEntry.COLUMN_MOVIE_ID + " = " + mId,
+                            null);
+
+                    // Show Toast to let user know that the movie was deleted from db
+                    CharSequence toastMsg = String.format(getString(R.string.toast_delete), mTitle);
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getContext(), toastMsg, duration);
+                    toast.show();
+                }
+            });
 
         } else {
 
@@ -151,10 +170,10 @@ public class DetailFragment extends Fragment {
                     movieValues.put(MovieContract.FavouritesEntry.COLUMN_REVIEW_CONTENT, Utility.listToString(mReviews));
 
                     // Now add this to the data base
-                    getContext().getContentResolver().insert(MovieContract.FavouritesEntry.CONTENT_URI, movieValues);
+                    getContext().getContentResolver().insert(MovieContract.FavouritesEntry.CONTENT_ITEM_URI, movieValues);
 
                     // Show Toast to let user know that the movie was stored in the DB
-                    CharSequence toastMsg = String.format(getString(R.string.toast), mTitle);
+                    CharSequence toastMsg = String.format(getString(R.string.toast_add), mTitle);
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(getContext(), toastMsg, duration);
                     toast.show();
