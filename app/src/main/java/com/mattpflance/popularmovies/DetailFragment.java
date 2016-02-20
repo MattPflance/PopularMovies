@@ -45,6 +45,8 @@ import java.util.concurrent.TimeoutException;
  */
 public class DetailFragment extends Fragment {
 
+    private final boolean REVIEWS_ENABLED = false;
+
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private Context mContext;
@@ -259,46 +261,48 @@ public class DetailFragment extends Fragment {
             dynamicLL.addView(tv);
         }
 
-        // Title for Reviews
-        TextView reviewTitle = new TextView(mContext);
-        reviewTitle.setTextSize(Utility.dpToPx(mContext, 10));
-        reviewTitle.setText(getString(R.string.reviews));
-        dynamicLL.addView(reviewTitle);
+        if (REVIEWS_ENABLED) {
 
-        if (mReviews != null && mReviews.size() != 0) {
+            // Title for Reviews
+            TextView reviewTitle = new TextView(mContext);
+            reviewTitle.setTextSize(Utility.dpToPx(mContext, 10));
+            reviewTitle.setText(getString(R.string.reviews));
+            dynamicLL.addView(reviewTitle);
 
-            // Get the length of reviews AND authors
-            int length = mReviews.size();
+            if (mReviews != null && mReviews.size() != 0) {
 
-            // Create layout for Reviews
-            for (int i=0; i<length; i ++) {
+                // Get the length of reviews AND authors
+                int length = mReviews.size();
 
-                // Text View for Review Author
-                TextView authorTV = new TextView(mContext);
-                authorTV.setTextAppearance(mContext, R.style.boldText);
-                authorTV.setTextSize(Utility.dpToPx(mContext, 6));
-                authorTV.setText(String.format(mContext.getString(R.string.format_review_author), mReviewAuthors.get(i)));
-                dynamicLL.addView(authorTV);
+                // Create layout for Reviews
+                for (int i = 0; i < length; i++) {
 
-                // Text View for the review's content
-                int pad = Utility.dpToPx(mContext, 5);
+                    // Text View for Review Author
+                    TextView authorTV = new TextView(mContext);
+                    authorTV.setTextAppearance(mContext, R.style.boldText);
+                    authorTV.setTextSize(Utility.dpToPx(mContext, 6));
+                    authorTV.setText(String.format(mContext.getString(R.string.format_review_author), mReviewAuthors.get(i)));
+                    dynamicLL.addView(authorTV);
 
-                TextView contentTV = new TextView(mContext);
-                contentTV.setPadding(pad, pad, pad, pad);
-                contentTV.setTextSize(Utility.dpToPx(mContext, 5));
-                contentTV.setText(mReviews.get(i));
-                dynamicLL.addView(contentTV);
+                    // Text View for the review's content
+                    int pad = Utility.dpToPx(mContext, 5);
 
+                    TextView contentTV = new TextView(mContext);
+                    contentTV.setPadding(pad, pad, pad, pad);
+                    contentTV.setTextSize(Utility.dpToPx(mContext, 5));
+                    contentTV.setText(mReviews.get(i));
+                    dynamicLL.addView(contentTV);
+
+                }
+
+            } else {
+                // There are no reviews
+                TextView tv = new TextView(mContext);
+                tv.setTextSize(Utility.dpToPx(mContext, 6));
+                tv.setText(getString(R.string.no_reviews));
+                dynamicLL.addView(tv);
             }
-
-        } else {
-            // There are no reviews
-            TextView tv = new TextView(mContext);
-            tv.setTextSize(Utility.dpToPx(mContext, 6));
-            tv.setText(getString(R.string.no_reviews));
-            dynamicLL.addView(tv);
         }
-
         // Grab the parent we need to attach the new LinearLayout to
         RelativeLayout parentView = (RelativeLayout) view.findViewById(R.id.detail_scroll_view_layout);
 

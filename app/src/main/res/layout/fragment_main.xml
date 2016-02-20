@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler_view_movies"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal" />
-    <!--android:numColumns="auto_fit"-->
-    <!--android:verticalSpacing="@dimen/vert_grid_spacing"-->
-    <!--android:horizontalSpacing="@dimen/horz_grid_spacing"-->
-    <!--android:stretchMode="columnWidth"-->
-    <!--android:gravity="center"-->
-    <!--/>-->
+    android:background="@color/black">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_movies"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal" />
+
+    <!-- Text view for empty list -->
+    <TextView android:id="@+id/empty_list_text"
+        android:text="@string/empty_movies_view"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:padding="@dimen/activity_horizontal_margin" />
+
+</FrameLayout>

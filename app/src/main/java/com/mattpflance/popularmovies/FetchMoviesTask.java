@@ -31,6 +31,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
     private String mSortingStr;
     private ImageAdapter mMoviesAdapter;
 
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void loadFirstMovie();
+    }
+
     public FetchMoviesTask(Context context, String sort, ImageAdapter imageAdapter) {
         mContext = context;
         mSortingStr = sort;
@@ -126,14 +133,24 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             for (Movie movie : movies) {
                 // Don't need to make a request to API if favourites
                 if (mSortingStr != "favourites") {
-                    // COOOOOOKIIIEEEEEE
+
+                    // TODO Set up a SyncAdapter for movies
+
+                    /**
+                     * The Movie DB has recently set a cap on the # of API requests one can make..
+                     * This big cookie method won't work so I am disabling Reviews for the time being.
+                     * Solution is to cache all movie data and refresh every 24hrs (undecided)..
+                     * Need to set up a Sync Adapter
+                     */
+
                     new FetchTrailersTask(movie).execute();
-                    new FetchReviewsTask(movie).execute();
+                    //new FetchReviewsTask(movie).execute();
                 }
                 mMoviesAdapter.add(movie);
             }
             mMoviesAdapter.notifyDataSetChanged();
         }
+        //((Callback) mContext).loadFirstMovie();
     }
 
     private List<Movie> getMovieDataFromJson(String detailsStr) throws JSONException {

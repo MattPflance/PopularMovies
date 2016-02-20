@@ -60,6 +60,9 @@ public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<String>>
             urlConnection.connect();
 
             // Read the input stream into a String
+
+            Log.v(LOG_TAG, "Response Code: " + urlConnection.getResponseCode());
+
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {

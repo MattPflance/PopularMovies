@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,8 +61,6 @@ public class MoviesFragment extends Fragment {
 
         // Now find the RecyclerView we want to bind our adapter to
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_movies);
-
-        mRecyclerView.setBackgroundColor(Color.BLACK);
 
         // Set the LayoutManager to the RecyclerView
         int orientation = getResources().getConfiguration().orientation;

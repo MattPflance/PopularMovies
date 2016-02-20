@@ -14,16 +14,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FetchMoviesTask.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private final String DEFAULT_SORT = "popularity.desc";
 
     private static boolean mTwoPane;
+    private DetailFragment mDetailFragment;
     private String mSortingStr;
     private ImageAdapter mMoviesAdapter;
 
@@ -47,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
             // adding or replacing the detail fragment using a
             // fragment transaction.
             if (savedInstanceState == null) {
-                DetailFragment fragment = new DetailFragment();
+                mDetailFragment = new DetailFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_container, fragment, DETAILFRAGMENT_TAG)
+                        .replace(R.id.detail_container, mDetailFragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -62,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.movies_menu, menu);
         return true;
+    }
+
+    public void loadFirstMovie() {
+        View view = mDetailFragment.getView();
+        if (view.getVisibility() == View.GONE) {
+            // Load the first movie
+            Log.v(LOG_TAG, "Hello");
+        }
     }
 
     @Override
@@ -108,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
          */
 
         if (Utility.isConnectedToInternet(this) || mSortingStr.equals("favourites")) {
+            Log.v(LOG_TAG, "MAKING MOVIES REQUEST RIGHT NOW");
             new FetchMoviesTask(this, mSortingStr, mMoviesAdapter).execute();
         } else {
             try {

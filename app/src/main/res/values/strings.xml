@@ -30,6 +30,8 @@
 
 
     <string name="action_share">Share</string>
+    <string name="favourite_button">Favourite</string>
+    <string name="unfavourite_button">Un-Favourite</string>
 
     <!-- END DETAIL TEXT -->
 
@@ -43,9 +45,10 @@
     <string name="internet_close">CLOSE</string>
 
     <!-- Other -->
-    <string name="favourite_button">Favourite</string>
-    <string name="unfavourite_button">Un-Favourite</string>
     <string name="image_description">Thumbnail</string>
     <string name="sort_key">SORT</string>
+
+    <!-- EMPTY VIEW -->
+    <string name="empty_movies_view">Movie data is not available</string>
 
 </resources>
