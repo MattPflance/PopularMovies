@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
 
     defaultConfig {
         applicationId "com.mattpflance.popularmovies"
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 16
+        targetSdkVersion 26
     }
     buildTypes {
         release {
@@ -19,17 +19,18 @@ android {
         mavenCentral()
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', '"<ENTER API KEY HERE>"'
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', '"1f223fc89d191807769dde2869ad3910"'
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:support-annotations:23.3.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:support-annotations:26.1.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    testImplementation 'junit:junit:4.12'
 }

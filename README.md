@@ -1,5 +1,10 @@
 # PopularMovies
+An Android app that displays lists of popular movies, summaries, and trailers. Favourite movies for offline functionality and easy viewing access by filtering.
 
-This is an app that displays popular movie information to users and allows them to save some of their favourites.
+## Screenshots
 
-NOTE: This app requires an API key from www.themoviedb.org. To use the app, please get your free API key and place it in the gradle.app file.
+### Phone
+![](/screenshots/phone_main.png)    ![](/screenshots/phone_details.png)
+
+### Tablet
+![](/screenshots/tablet.png)
